@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- load manifest -->
+    <link rel="manifest" href="./manifest.json">
+    <title>Hello, world!</title>
+  </head>
+  <body class="container">
+    <h1 style="text-align: center;">PWA with Workbox V2</h1>
+    
+    <div id="card-item">
+
+    </div>
+    </div>
+
+  
+    <!-- load costume js -->
+    <script async src="./js/main.js"></script>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script>
+        // Check that service workers are supported
+        if ('serviceWorker' in navigator) {
+          // Use the window load event to keep the page load performant
+            window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js');
+            });
+        }
+    </script>   
+    <script type="module">
+    // This code sample uses features introduced in Workbox v6.
+    import {Workbox} from 'https://storage.googleapis.com/workbox-cdn/releases/6.1.5/workbox-window.prod.mjs';
+    console.log('update sw');
+    if ('serviceWorker' in navigator) {
+    const wb = new Workbox('./sw.js');
+
+    function createUIPrompt(opts) {
+        if (confirm('A new update is available. Do you want to update now?')) {
+            opts.onAccept()
+        }
+    }
+    const showSkipWaitingPrompt = (event) => {
+        // `event.wasWaitingBeforeRegister` will be false if this is
+        // the first time the updated service worker is waiting.
+        // When `event.wasWaitingBeforeRegister` is true, a previously
+        // updated service worker is still waiting.
+        // You may want to customize the UI prompt accordingly.
+
+        // Assumes your app has some sort of prompt UI element
+        // that a user can either accept or reject.
+        const prompt = createUIPrompt({
+        onAccept: () => {
+            // Assuming the user accepted the update, set up a listener
+            // that will reload the page as soon as the previously waiting
+            // service worker has taken control.
+            wb.addEventListener('controlling', (event) => {
+            window.location.reload();
+            });
+
+            wb.messageSkipWaiting();
+        },
+
+        onReject: () => {
+            prompt.dismiss();
+        }
+        });
+    };
+
+    // Add an event listener to detect when the registered
+    // service worker has installed but is waiting to activate.
+    wb.addEventListener('waiting', showSkipWaitingPrompt);
+
+    wb.register();
+    }
+    </script>  
+</body>
+</html>

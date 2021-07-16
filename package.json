@@ -1,0 +1,11 @@
+{
+  "name": "pwa-workbox",
+  "version": "1.0.0",
+  "description": "Simple PWA with workbox",
+  "main": "index.js",
+  "scripts": {
+    "serve": "http-server -p 9000 build -c-1"
+  },
+  "author": "",
+  "license": "ISC"
+}
